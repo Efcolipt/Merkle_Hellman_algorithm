@@ -20,12 +20,15 @@ int dec2bin(int num)
     return bin;
 }
 
+
+
+
 void decryption(int m, int n,int* closeKey){
     int index = 7, counter = 0,counterAnswere = 0;
     int n1 = 1, quanity = 0, i = 0;
     int cipher[100] = {0}, result[100];
     char binaryIndexs[8] = {0};
-    char resultAnswere[100] = {0};
+    int resultAnswere[100] = {0};
     while (n * n1 % m != 1) n1++;
     printf("\nEnter quanity Cipher:\n");
     scanf("%d", &quanity);
@@ -40,10 +43,9 @@ void decryption(int m, int n,int* closeKey){
             binaryIndexs[counter++] = index;
             index = 7;
         }
-        for (size_t v = 0; binaryIndexs[v] != '\0'; v++) resultAnswere[counterAnswere] += pow(2, binaryIndexs[v]);
-        printf("%d = %d\n", resultAnswere[counterAnswere], dec2bin(resultAnswere[counterAnswere]));
+        for (size_t v = 0; binaryIndexs[v] != '\0'; v++) resultAnswere[counterAnswere] +=  dec2bin(pow(2, binaryIndexs[v]));
+        printf("%d\n",resultAnswere[counterAnswere]);
         counterAnswere++;
-        printf("\n");
     }
 }
 
