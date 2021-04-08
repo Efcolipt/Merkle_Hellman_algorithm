@@ -2,41 +2,63 @@
 #include <stdio.h>
 #include <locale.h>
 #include <stdlib.h>
+#include <math.h>
+#include <string.h>
 
 
-void decryption(int m, int n){
-    int n1 = 1, i = 0;
-    int cipher[100] = {0}, result[100];
-    while (n * n1 % m != 1) n1++;
-    printf("Ciphers (-1 to stop typing):\n");
-    while(1){
-        scanf("%d", &cipher[i]);
-        if (cipher[i] == -1) break;
-        i++;
+int dec2bin(int num)
+{
+    int bin = 0, k = 1;
+
+    while (num)
+    {
+        bin += (num % 2) * k;
+        k *= 10;
+        num /= 2;
     }
 
-    for (i = 0; cipher[i] != -1; i++) {
+    return bin;
+}
+
+void decryption(int m, int n,int* closeKey){
+    int index = 7, counter = 0,counterAnswere = 0;
+    int n1 = 1, quanity = 0, i = 0;
+    int cipher[100] = {0}, result[100];
+    char binaryIndexs[8] = {0};
+    char resultAnswere[100] = {0};
+    while (n * n1 % m != 1) n1++;
+    printf("\nEnter quanity Cipher:\n");
+    scanf("%d", &quanity);
+    printf("Enter ciphers:\n");
+    for (i = 0; i < quanity; i++) scanf("%d", &cipher[i]);
+    for (i = 0; i < quanity; i++) {
         result[i] = cipher[i] * n1 % m;
-        printf("Weight in %d row: %d\n", i + 1, result[i]);
+        counter = 0; index = 7; memset(binaryIndexs, 0 , sizeof binaryIndexs);
+        while(result[i] > 0){
+            while(closeKey[index] > result[i]) index--;
+            result[i] -= closeKey[index];
+            binaryIndexs[counter++] = index;
+            index = 7;
+        }
+        for (size_t v = 0; binaryIndexs[v] != '\0'; v++) resultAnswere[counterAnswere] += pow(2, binaryIndexs[v]);
+        printf("%d = %d\n", resultAnswere[counterAnswere], dec2bin(resultAnswere[counterAnswere]));
+        counterAnswere++;
+        printf("\n");
     }
 }
 
 
+
 void encryption(int *openKey){
-    int result = 0,  num = 0, j = 0, i = 0, quanity = 0,temp = 0;
-    int binaryWord[1000];
-    printf("\nEnter quanity binary.\n");
-    scanf("%d", &quanity);
-    printf("\nEnter binary.\n");
-    for(int i = 0, j = 0; i < 1000; i++){
-        if (temp == (quanity * 8))break;
-        scanf("%d", &binaryWord[i]);
-        if (binaryWord[i] == 1) result += openKey[j];
-        temp++; j++;
-        if (j == 8){
-            printf("Cipher program: %d\n", result);
-            j = result = 0;
-        }
+    int result = 0;
+    char binaryWord[1000] = {0}, word[1000] = {0};
+    printf("\nEnter word.\n");
+    scanf("%s", &word);
+    for (int i = 0; word[i] != '\0'; i++) {
+        result = 0;
+        for (int b = 7,v = 0; b >= 0; --b, v++) binaryWord[v] = (word[i] & (1 << b)) ? '1' : '0';
+        for (int j = 0; j < 8; j++)  if (binaryWord[j] == '1') result += openKey[j];
+        printf("Cipher program: %d\n", result);
     }
 }
 
@@ -64,7 +86,7 @@ int main(void)
     createOpenKey(closeKey, m, n, openKey);
     switch (a){
         case 1: encryption(openKey); break;
-        case 2: decryption(m, n); break;
+        case 2: decryption(m, n, closeKey); break;
     }
 
     return 0;
